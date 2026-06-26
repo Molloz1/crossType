@@ -14,25 +14,27 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Google_signIn } from "@/lib/auth-client"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+
+import { authClient, Google_signIn } from "@/lib/auth-client"
 import { redirect } from "next/navigation"
 
 
-export async function LoginForm({
+
+export  function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  
+    const { 
+        data: session, 
+        isPending, //loading state
+        error, //error object
+        refetch //refetch the session
+    } = authClient.useSession() 
 
-const session = await auth.api.getSession({
-  headers : await headers()
-})
-if(session){
-  redirect('/dashboard')
-}
-
+    if(session){
+      redirect('/dashboard')
+    }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
