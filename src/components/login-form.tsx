@@ -16,11 +16,24 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Google_signIn } from "@/lib/auth-client"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 
-export function LoginForm({
+
+export async function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+const session = await auth.api.getSession({
+  headers : await headers()
+})
+if(session){
+  redirect('/dashboard')
+}
+
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
