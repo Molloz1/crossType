@@ -3,6 +3,16 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {  SettingsIcon, UserIcon } from "lucide-react";
+import Badges from "../components/Badges";
+
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -26,29 +36,49 @@ export default async function Page() {
         {/* Logo / Brand */}
         <div className="text-xl font-bold">Cross Type</div>
 
-        {/* User Info */}
-        <div className="flex items-center gap-4">
-          {/* Avatar */}
-          <Avatar>
-            <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? "User"} />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
+        {/* User Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="focus:outline-none">
+            <div className="flex items-center gap-3 cursor-pointer">
+              <div className="hidden sm:flex flex-col text-sm leading-tight text-right">
+                <span className="font-semibold">{session.user.name}</span>
+              </div>
+              <Avatar>
+                <AvatarImage src={session.user.image ?? ""} alt={session.user.name ?? "User"} />
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
+            </div>
+          </DropdownMenuTrigger>
 
-          {/* Name & Email */}
-          <div className="hidden sm:flex flex-col text-sm leading-tight">
-            <span className="font-semibold">{session.user.name}</span>
-            <span className="text-xs">{session.user.email}</span>
-          </div>
+          <DropdownMenuContent align="end" className="w-56">
+            {/* User info header */}
+            <div className="px-2 py-2">
+              <p className="text-sm font-medium">{session.user.name}</p>
+              <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
+            </div>
+            <DropdownMenuSeparator />
 
-          {/* Sign Out */}
-          <SignOut />
-        </div>
+            <DropdownMenuItem>
+              <UserIcon className="mr-2 h-4 w-4" />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <SettingsIcon className="mr-2 h-4 w-4" />
+              Settings
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem variant="destructive" asChild>
+              <SignOut />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </nav>
 
       {/* Page Content */}
       <main className="p-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="mt-1">Welcome back, {session.user.name}!</p>
+       <Badges/>
       </main>
     </div>
   );
